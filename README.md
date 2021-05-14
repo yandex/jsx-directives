@@ -2,6 +2,20 @@
 
 Директивы для JSX (React, Preact, др.) по аналогии с директивами Vue и Angular
 
+Для того, чтобы директивы заработали для приложения на React, нужно подключить их следующим образом:
+```tsx
+// Импортируем сам пакет директив
+import { registerAllReact } from 'jsx-directives';
+
+// Импортируем актуальные версии реакта и jsx-рантайма
+import React from 'react';
+import * as rt from 'react/jsx-runtime';
+import * as rtDEV from 'react/jsx-dev-runtime';
+
+// Связываем директивы и актуальный реакт
+registerAllReact(React, rt, rtDEV);
+```
+
 Пример использования для React:
 ```tsx
 import React, { FC, useCallback, useState } from 'react';

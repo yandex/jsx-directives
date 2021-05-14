@@ -1,11 +1,11 @@
 {
   "name": "jsx-directives",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "Directives mechanics for JSX",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc src/index.ts --declaration --outDir dist && cp package.json dist && cp .npmrc dist && cp README.md dist",
+    "build": "tsc src/index.ts --declaration --outDir dist && cp package.json dist && cp README.md dist",
     "deploy": "cd dist && npm publish"
   },
   "repository": {

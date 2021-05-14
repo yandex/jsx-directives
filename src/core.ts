@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-const createElement = React.createElement;
 export const PREFIX = '$';
 
 const propsDirectives = new Map();
@@ -28,16 +27,18 @@ type ElementDirectiveHandler3Arg = (element: CreateElementReturn, props: CreateE
 type ElementDirectiveHandler4Arg = (element: CreateElementReturn, props: CreateElementProps, type: CreateElementType, children: CreateElementChildren) => CreateElementReturn;
 export type ElementDirectiveHandler = ElementDirectiveHandler2Arg | ElementDirectiveHandler3Arg | ElementDirectiveHandler4Arg;
 
-(React as any).createElement = function createElementPatch(this: typeof React, type: CreateElementType, props: CreateElementProps, ...children: CreateElementChildren[]): CreateElementReturn {
-    const newProps = wrapProps(type, props, children);
-    const element = createElement.call(this, type, newProps, ...children);
-    if (!newProps || elementDirectives.size === 0) return element;
+export function jsxPragmaBuilder(pragma: (...args: any[]) => any) {
+    return function createElementPatch(this: typeof React, type: CreateElementType, props: CreateElementProps, ...children: CreateElementChildren[]): CreateElementReturn {
+        const newProps = wrapProps(type, props, children);
+        const element = pragma.call(this, type, newProps, ...children);
+        if (!newProps || elementDirectives.size === 0) return element;
 
-    return Object.keys(newProps)
-        .filter(it => it.substr(0, PREFIX.length) === PREFIX && elementDirectives.has(it))
-        .sort() // для устранения кроссбраузерной разницы порядка свойств объекта
-        .reduce((acc, it) => elementDirectives.get(it)(acc, newProps, type, children), element);
-} as typeof React.createElement;
+        return Object.keys(newProps)
+            .filter(it => it.substr(0, PREFIX.length) === PREFIX && elementDirectives.has(it))
+            .sort() // для устранения кроссбраузерной разницы порядка свойств объекта
+            .reduce((acc, it) => elementDirectives.get(it)(acc, newProps, type, children), element);
+    };
+}
 
 export function registerPropsDirective (name: string, handler: PropsDirectiveHandler) {
     if (isRegistered(name)) {
@@ -71,4 +72,34 @@ export function unregister(name: string) {
 
 export function isRegistered(name: string) {
     return propsDirectives.has(name) || elementDirectives.has(name);
+}
+
+export function registerPragma(object: any, property: string) {
+    object[property] = jsxPragmaBuilder(object[property]);
+}
+
+export function registerReact(React: any) {
+    registerPragma(React, 'createElement');
+}
+
+export function registerJsxRuntime(rt: any) {
+    registerPragma(rt, 'jsx');
+    registerPragma(rt, 'jsxs');
+}
+
+export function registerJsxDevRuntime(rtDev: any) {
+    registerPragma(rtDev, 'jsxDEV');
+    registerPragma(rtDev, 'jsxsDEV');
+}
+
+export function registerAllReact (react: any, reactRuntime: any, reactDevRuntime: any) {
+    registerReact(react);
+    registerJsxRuntime(reactRuntime);
+    registerJsxDevRuntime(reactDevRuntime);
+}
+
+export function registerAllReactAutodetect () {
+    registerReact(require('react'));
+    registerJsxRuntime(require('react/jsx-runtime'));
+    registerJsxDevRuntime(require('react/jsx-dev-runtime'));
 }
