@@ -1,6 +1,6 @@
 {
   "name": "jsx-directives",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Directives mechanics for JSX",
   "keywords": ["jsx", "directives", "react", "hoc", "syntax sugar"],
   "main": "index.js",
