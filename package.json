@@ -1,7 +1,8 @@
 {
   "name": "jsx-directives",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Directives mechanics for JSX",
+  "keywords": ["jsx", "directives", "react", "hoc", "syntax sugar"],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
