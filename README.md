@@ -56,7 +56,8 @@ registerAllReact(React, rt, rtDEV);
 
 По умолчанию в пакете предустановлены следующие директивы:
 
-- $visible - принимает булево значение и добавляет/удаляет элемент из DOM в зависимости от значения
+- $show - принимает булево значение и добавляет элемент в DOM если значение истинно
+- $hide - принимает булево значение и удаляет элемент из DOM если значение истинно
 - $model - принимает объект и передаёт его свойства value и onChange как свойства компонента
 
 Пример использования для React:
@@ -82,7 +83,7 @@ export const SomeComponent: FC = () => {
     <div>
       <input $model={model} />
       <div>{model.value}</div>
-      <div $visible={model.value !== 'hide'}>Type "hide" and this message will be removed from DOM</div>
+      <div $hide={model.value === 'hide'}>Type "hide" and this message will be removed from DOM</div>
     </div>
   );
 };
@@ -122,16 +123,16 @@ import { registerPropsDirective } from '@yandex-market/react-directives';
 
 declare module 'react' {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
-        $visible?: boolean;
+        $show?: boolean;
     }
 
     interface Attributes {
-        $visible?: boolean;
+        $show?: boolean;
     }
 }
 
-registerElementDirective('$visible', (element: any, props: any) => {
-    if (props && props.$visible === false) {
+registerElementDirective('$show', (element: any, props: any) => {
+    if (props && Boolean(props.$show)) {
         return null;
     } else {
         return element;

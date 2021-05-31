@@ -1,19 +1,19 @@
 import { registerElementDirective } from './core';
 
-export type VisibleType = boolean;
+export type HideType = boolean;
 
 declare module 'react' {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
-        $visible?: VisibleType;
+        $hide?: HideType;
     }
 
     interface Attributes {
-        $visible?: VisibleType;
+        $hide?: HideType;
     }
 }
 
-registerElementDirective('$visible', (element: any, props: any) => {
-    if (props && props.$visible === false) {
+registerElementDirective('$hide', (element: any, props: any) => {
+    if (props && Boolean(props.$hide)) {
         return null;
     } else {
         return element;

@@ -1,3 +1,4 @@
 export * from './core';
 export * from './model';
-export * from './visible';
+export * from './show';
+export * from './hide';
