@@ -4,6 +4,7 @@ export const PREFIX = '$';
 
 const propsDirectives = new Map();
 const elementDirectives = new Map();
+const hocDirectives = new Map();
 function wrapProps(type: CreateElementType, props: CreateElementProps, children: CreateElementChildren[]): CreateElementProps {
     if (!props || propsDirectives.size === 0) return props;
 
@@ -60,34 +61,58 @@ export function registerElementDirective (name: string, handler: ElementDirectiv
     elementDirectives.set(name, handler);
 }
 
+export function registerHocDirective (name: string, handler: ElementDirectiveHandler) {
+    if (isRegistered(name)) {
+        throw new Error(`Directive with name "${name}" is already registered`);
+    }
+    if (name.substr(0, PREFIX.length) !== PREFIX) {
+        throw new Error(`Directive name should start with "${PREFIX}". Provided: "${name}"`);
+    }
+    hocDirectives.set(name, handler);
+}
+
 export function unregister(name: string) {
     if (propsDirectives.has(name)) {
         propsDirectives.delete(name);
     } else if (elementDirectives.has(name)) {
         elementDirectives.delete(name);
+    } else if (hocDirectives.has(name)) {
+        hocDirectives.delete(name);
     } else {
         throw new Error(`Directive with name "${name}" is not registered yet`);
     }
 }
 
 export function isRegistered(name: string) {
-    return propsDirectives.has(name) || elementDirectives.has(name);
+    return propsDirectives.has(name) || elementDirectives.has(name) || hocDirectives.has(name);
 }
 
 export function registerPragma(object: any, property: string) {
     object[property] = jsxPragmaBuilder(object[property]);
 }
 
+let isRegisterReactCalled = false;
 export function registerReact(React: any) {
+    if (isRegisterReactCalled) return;
+    isRegisterReactCalled = true;
+
     registerPragma(React, 'createElement');
 }
 
+let isRegisterJsxRuntimeCalled = false;
 export function registerJsxRuntime(rt: any) {
+    if (isRegisterJsxRuntimeCalled) return;
+    isRegisterJsxRuntimeCalled = true;
+
     registerPragma(rt, 'jsx');
     registerPragma(rt, 'jsxs');
 }
 
+let isRegisterJsxDevRuntimeCalled = false;
 export function registerJsxDevRuntime(rtDev: any) {
+    if (isRegisterJsxDevRuntimeCalled) return;
+    isRegisterJsxDevRuntimeCalled = true;
+
     registerPragma(rtDev, 'jsxDEV');
     registerPragma(rtDev, 'jsxsDEV');
 }
