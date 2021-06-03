@@ -1,5 +1,7 @@
 # jsx-directives
 
+[![Join the chat at https://gitter.im/jsx-directives/community](https://badges.gitter.im/jsx-directives/community.svg)](https://gitter.im/jsx-directives/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Директивы для JSX (React, Preact, др.) по аналогии с директивами [Vue](https://ru.vuejs.org/v2/guide/custom-directive.html) и [Angular](https://angular.io/guide/attribute-directives)
 
 ## Мотивация
