@@ -29,8 +29,7 @@ describe('directive $model', () => {
         expect(target.value).toBe(model.value);
 
         expect(model.onChange).toHaveBeenCalledTimes(0);
-        userEvent.click(target);
-        userEvent.keyboard("!");
+        userEvent.type(target, "!");
         expect(model.onChange).toHaveBeenCalledTimes(1);
     });
 });
