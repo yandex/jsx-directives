@@ -5,4 +5,5 @@ cache:
   npm: false
 install:
   - npm install
-script: test
+script:
+  - npm test
