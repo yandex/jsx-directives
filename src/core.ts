@@ -14,8 +14,9 @@ function wrapProps(type: CreateElementType, props: CreateElementProps, children:
         .reduce((acc, it) => propsDirectives.get(it)(acc, type, children), props);
 }
 
-export type CreateElementReturn = ReturnType<typeof React.createElement>;
-export type CreateElementArgs = Parameters<typeof React.createElement>;
+export type CreateType = typeof React.createElement;
+export type CreateElementReturn = ReturnType<CreateType>;
+export type CreateElementArgs = Parameters<CreateType>;
 export type CreateElementType = CreateElementArgs[0];
 export type CreateElementProps = CreateElementArgs[1];
 export type CreateElementChildren = CreateElementArgs[2];
@@ -26,9 +27,10 @@ export type PropsDirectiveHandler = PropsDirectiveHandler1Arg | PropsDirectiveHa
 type ElementDirectiveHandler2Arg = (element: CreateElementReturn, props: CreateElementProps) => CreateElementReturn;
 type ElementDirectiveHandler3Arg = (element: CreateElementReturn, props: CreateElementProps, type: CreateElementType) => CreateElementReturn;
 type ElementDirectiveHandler4Arg = (element: CreateElementReturn, props: CreateElementProps, type: CreateElementType, children: CreateElementChildren) => CreateElementReturn;
-export type ElementDirectiveHandler = ElementDirectiveHandler2Arg | ElementDirectiveHandler3Arg | ElementDirectiveHandler4Arg;
+type ElementDirectiveHandler5Arg = (element: CreateElementReturn, props: CreateElementProps, type: CreateElementType, children: CreateElementChildren, pragma: CreateType) => CreateElementReturn;
+export type ElementDirectiveHandler = ElementDirectiveHandler2Arg | ElementDirectiveHandler3Arg | ElementDirectiveHandler4Arg | ElementDirectiveHandler5Arg;
 
-export function jsxPragmaBuilder(pragma: (...args: any[]) => any) {
+export function jsxPragmaBuilder(pragma: CreateType) {
     return function createElementPatch(this: typeof React, type: CreateElementType, props: CreateElementProps, ...children: CreateElementChildren[]): CreateElementReturn {
         const newProps = wrapProps(type, props, children);
         const element = pragma.call(this, type, newProps, ...children);
@@ -37,7 +39,7 @@ export function jsxPragmaBuilder(pragma: (...args: any[]) => any) {
         return Object.keys(newProps)
             .filter(it => it.substr(0, PREFIX.length) === PREFIX && elementDirectives.has(it))
             .sort() // для устранения кроссбраузерной разницы порядка свойств объекта
-            .reduce((acc, it) => elementDirectives.get(it)(acc, newProps, type, children), element);
+            .reduce((acc, it) => elementDirectives.get(it)(acc, newProps, type, children, pragma), element);
     };
 }
 
