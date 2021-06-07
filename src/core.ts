@@ -20,26 +20,46 @@ export type CreateElementArgs = Parameters<CreateType>;
 export type CreateElementType = CreateElementArgs[0];
 export type CreateElementProps = CreateElementArgs[1];
 export type CreateElementChildren = CreateElementArgs[2];
+
 type PropsDirectiveHandler3Arg = (props: CreateElementProps, type: CreateElementType, children: CreateElementChildren) => CreateElementProps;
 type PropsDirectiveHandler2Arg = (props: CreateElementProps, type: CreateElementType) => CreateElementProps;
 type PropsDirectiveHandler1Arg = (props: CreateElementProps) => CreateElementProps;
 export type PropsDirectiveHandler = PropsDirectiveHandler1Arg | PropsDirectiveHandler2Arg | PropsDirectiveHandler3Arg;
+
 type ElementDirectiveHandler2Arg = (element: CreateElementReturn, props: CreateElementProps) => CreateElementReturn;
 type ElementDirectiveHandler3Arg = (element: CreateElementReturn, props: CreateElementProps, type: CreateElementType) => CreateElementReturn;
 type ElementDirectiveHandler4Arg = (element: CreateElementReturn, props: CreateElementProps, type: CreateElementType, children: CreateElementChildren) => CreateElementReturn;
 type ElementDirectiveHandler5Arg = (element: CreateElementReturn, props: CreateElementProps, type: CreateElementType, children: CreateElementChildren, pragma: CreateType) => CreateElementReturn;
 export type ElementDirectiveHandler = ElementDirectiveHandler2Arg | ElementDirectiveHandler3Arg | ElementDirectiveHandler4Arg | ElementDirectiveHandler5Arg;
 
+type HocDirectiveHandler2Arg = (create: Function, props: CreateElementProps) => CreateElementReturn;
+export type HocDirectiveHandler = HocDirectiveHandler2Arg;
+
 export function jsxPragmaBuilder(pragma: CreateType) {
     return function createElementPatch(this: typeof React, type: CreateElementType, props: CreateElementProps, ...children: CreateElementChildren[]): CreateElementReturn {
-        const newProps = wrapProps(type, props, children);
-        const element = pragma.call(this, type, newProps, ...children);
-        if (!newProps || elementDirectives.size === 0) return element;
+        let newProps = wrapProps(type, props, children);
+        let Element = ({ children = [], ...props }: any) => pragma.call(this, type, props, ...children);
+        if (!newProps || elementDirectives.size === 0) return Element({children, ...newProps});
 
-        return Object.keys(newProps)
-            .filter(it => it.substr(0, PREFIX.length) === PREFIX && elementDirectives.has(it))
-            .sort() // для устранения кроссбраузерной разницы порядка свойств объекта
-            .reduce((acc, it) => elementDirectives.get(it)(acc, newProps, type, children, pragma), element);
+        if (hocDirectives.size > 0) {
+            [newProps, Element] = Object.keys(newProps)
+                .filter(it => it.substr(0, PREFIX.length) === PREFIX && hocDirectives.has(it))
+                .sort() // для устранения кроссбраузерной разницы порядка свойств объекта
+                .reduce(([pr,el], it) => {
+                    const npr = { ...pr };
+                    delete (npr as any)[it];
+                    return [npr, hocDirectives.get(it)(el, pr)];
+                }, [newProps, Element]);
+        }
+
+        if (elementDirectives.size > 0) {
+            return Object.keys(newProps)
+                .filter(it => it.substr(0, PREFIX.length) === PREFIX && elementDirectives.has(it))
+                .sort() // для устранения кроссбраузерной разницы порядка свойств объекта
+                .reduce((acc, it) => elementDirectives.get(it)(acc, newProps, type, children, pragma), Element({children, ...newProps}));
+        }
+
+        return Element({children, ...newProps});
     };
 }
 
@@ -63,7 +83,7 @@ export function registerElementDirective (name: string, handler: ElementDirectiv
     elementDirectives.set(name, handler);
 }
 
-export function registerHocDirective (name: string, handler: ElementDirectiveHandler) {
+export function registerHocDirective (name: string, handler: HocDirectiveHandler) {
     if (isRegistered(name)) {
         throw new Error(`Directive with name "${name}" is already registered`);
     }

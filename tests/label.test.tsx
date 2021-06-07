@@ -20,6 +20,6 @@ describe('directive $label', () => {
             </div>,
         );
 
-        expect(container.querySelector('label span').innerHTML).toBe('Some label text');
+        expect(container.querySelector('label .label-text').innerHTML).toBe('Some label text');
     });
 });

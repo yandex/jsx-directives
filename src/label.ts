@@ -13,8 +13,10 @@ declare module 'react' {
 }
 
 registerElementDirective('$label', (element: any, props: any, type: any, children: any, create: CreateType) => {
-    return create('label', {}, [
-        create('span', { key: 'span' }, `${props.$label}`),
+    return create(
+        'label',
+        {},
+        create('span', { className: 'label-text' }, `${props.$label}`),
         element
-    ]);
+    );
 });

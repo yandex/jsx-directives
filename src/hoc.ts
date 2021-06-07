@@ -14,8 +14,10 @@ declare module 'react' {
 
 registerHocDirective('$hoc', (Factory: Function, props: any) => {
     if (props && 'function' === typeof props.$hoc) {
-        return Factory;
+        const Hoc = props.$hoc;
+        return Hoc(Factory);
     } else {
-        return null;
+        throw new Error('!!!!!!!!!');
+        return Factory;
     }
 });
