@@ -36,4 +36,42 @@ describe('directive $hoc', () => {
         expect(container.querySelector('.target')).toBeTruthy();
         expect(container.querySelector('.message')).toBeTruthy();
     });
+
+    test('two hocs', () => {
+        function Hoc1 (Create) {
+            return ({children, ...props}) => {
+                return (
+                    <>
+                        <span className="message">Message 1</span>
+                        <Create {...props}>
+                            {children}
+                        </Create>
+                    </>
+                );
+            }
+        }
+        function Hoc2 (Create) {
+            return ({children, ...props}) => {
+                return (
+                    <>
+                        <span className="message">Message 2</span>
+                        <Create {...props}>
+                            {children}
+                        </Create>
+                    </>
+                );
+            }
+        }
+
+        const { container } = render(
+            <div>
+                <input className="target" $hoc={[Hoc1, Hoc2]} />
+            </div>,
+        );
+
+        expect(container.querySelector('.target')).toBeTruthy();
+        expect(container.querySelectorAll('.message').length).toBe(2);
+        expect(container.querySelectorAll('.message')[0].innerHTML).toBe("Message 2");
+        expect(container.querySelectorAll('.message')[1].innerHTML).toBe("Message 1");
+    });
 });

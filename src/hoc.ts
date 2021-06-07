@@ -16,8 +16,10 @@ registerHocDirective('$hoc', (Factory: Function, props: any) => {
     if (props && 'function' === typeof props.$hoc) {
         const Hoc = props.$hoc;
         return Hoc(Factory);
+    } else if (props.$hoc instanceof Array) {
+        return (props.$hoc || []).reduce((acc, it) => it(acc), Factory);
     } else {
-        throw new Error('!!!!!!!!!');
+        console.error(`Unexpected arguments on $hoc`, props.$hoc);
         return Factory;
     }
 });
