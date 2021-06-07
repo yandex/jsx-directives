@@ -38,7 +38,7 @@ export type HocDirectiveHandler = HocDirectiveHandler2Arg;
 export function jsxPragmaBuilder(pragma: CreateType) {
     return function createElementPatch(this: typeof React, type: CreateElementType, props: CreateElementProps, ...children: CreateElementChildren[]): CreateElementReturn {
         let newProps = wrapProps(type, props, children);
-        let Element = ({ children = [], ...props }: any) => pragma.call(this, type, props, ...children);
+        let Element = ({ children = [], ...props }: any) => pragma.call(this, type, props, ...(children instanceof Array ? children : [children]));
         if (!newProps || elementDirectives.size === 0) return Element({children, ...newProps});
 
         if (hocDirectives.size > 0) {

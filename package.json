@@ -1,6 +1,6 @@
 {
   "name": "jsx-directives",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Directives mechanics for JSX",
   "keywords": [
     "jsx",
@@ -12,7 +12,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run build && jest",
-    "build": "tsc src/index.ts --declaration --outDir dist && cp package.json dist && cp README.md dist",
+    "build": "rm -Rf dist && tsc src/index.ts --declaration --outDir dist && cp package.json dist && cp README.md dist",
     "deploy": "cd dist && npm publish"
   },
   "repository": {
