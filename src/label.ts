@@ -4,19 +4,19 @@ export type LabelType = string;
 
 declare module 'react' {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
-        $label?: LabelType;
+        'x-label'?: LabelType;
     }
 
     interface Attributes {
-        $label?: LabelType;
+        'x-label'?: LabelType;
     }
 }
 
-registerElementDirective('$label', (element: any, props: any, type: any, children: any, create: CreateType) => {
+registerElementDirective('x-label', (element: any, props: any, type: any, children: any, create: CreateType) => {
     return create(
         'label',
         {},
-        create('span', { className: 'label-text' }, `${props.$label}`),
+        create('span', { className: 'label-text' }, `${props['x-label']}`),
         element
     );
 });

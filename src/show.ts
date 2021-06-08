@@ -4,16 +4,16 @@ export type ShowType = boolean;
 
 declare module 'react' {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
-        $show?: ShowType;
+        'x-show'?: ShowType;
     }
 
     interface Attributes {
-        $show?: ShowType;
+        'x-show'?: ShowType;
     }
 }
 
-registerElementDirective('$show', (element: any, props: any) => {
-    if (props && Boolean(props.$show)) {
+registerElementDirective('x-show', (element: any, props: any) => {
+    if (props && Boolean(props['x-show'])) {
         return element;
     } else {
         return null;

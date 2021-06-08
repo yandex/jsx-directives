@@ -7,7 +7,7 @@ import * as rtDEV from 'react/jsx-dev-runtime';
 import { render } from '@testing-library/react';
 import { registerAllReact } from '../dist';
 
-describe('directive $hoc', () => {
+describe('directive x-hoc', () => {
 
     beforeAll(() => {
         registerAllReact(React, rt, rtDEV);
@@ -29,7 +29,7 @@ describe('directive $hoc', () => {
 
         const { container } = render(
             <div>
-                <input className="target" $hoc={Hoc} />
+                <input className="target" x-hoc={Hoc} />
             </div>,
         );
 
@@ -65,7 +65,7 @@ describe('directive $hoc', () => {
 
         const { container } = render(
             <div>
-                <input className="target" $hoc={[Hoc1, Hoc2]} />
+                <input className="target" x-hoc={[Hoc1, Hoc2]} />
             </div>,
         );
 

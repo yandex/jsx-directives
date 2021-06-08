@@ -4,16 +4,16 @@ export type HideType = boolean;
 
 declare module 'react' {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
-        $hide?: HideType;
+        'x-hide'?: HideType;
     }
 
     interface Attributes {
-        $hide?: HideType;
+        'x-hide'?: HideType;
     }
 }
 
-registerElementDirective('$hide', (element: any, props: any) => {
-    if (props && Boolean(props.$hide)) {
+registerElementDirective('x-hide', (element: any, props: any) => {
+    if (props && Boolean(props['x-hide'])) {
         return null;
     } else {
         return element;

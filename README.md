@@ -59,9 +59,9 @@ registerAllReact(React, rt, rtDEV);
 
 По умолчанию в пакете предустановлены следующие директивы:
 
-- $show - принимает булево значение и добавляет элемент в DOM если значение истинно
-- $hide - принимает булево значение и удаляет элемент из DOM если значение истинно
-- $model - принимает объект и передаёт его свойства value и onChange как свойства компонента
+- x-show - принимает булево значение и добавляет элемент в DOM если значение истинно
+- x-hide - принимает булево значение и удаляет элемент из DOM если значение истинно
+- x-model - принимает объект и передаёт его свойства value и onChange как свойства компонента
 
 Пример использования для React:
 ```tsx
@@ -84,9 +84,9 @@ export const SomeComponent: FC = () => {
   const model = useModel('');
   return (
     <div>
-      <input $model={model} />
+      <input x-model={model} />
       <div>{model.value}</div>
-      <div $hide={model.value === 'hide'}>Type "hide" and this message will be removed from DOM</div>
+      <div x-hide={model.value === 'hide'}>Type "hide" and this message will be removed from DOM</div>
     </div>
   );
 };
@@ -105,17 +105,17 @@ export type ModelType = {
 
 declare module 'react' {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
-        $model?: ModelType;
+        x-model?: ModelType;
     }
 
     interface Attributes {
-        $model?: ModelType;
+        x-model?: ModelType;
     }
 }
 
-registerPropsDirective('$model', ({$model, ...props}: any) => ({
-    value: $model.value,
-    onChange: $model.onChange,
+registerPropsDirective('x-model', ({x-model, ...props}: any) => ({
+    value: x-model.value,
+    onChange: x-model.onChange,
     ...props,
 }));
 ```
@@ -126,16 +126,16 @@ import { registerPropsDirective } from '@yandex-market/react-directives';
 
 declare module 'react' {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
-        $show?: boolean;
+        x-show?: boolean;
     }
 
     interface Attributes {
-        $show?: boolean;
+        x-show?: boolean;
     }
 }
 
-registerElementDirective('$show', (element: any, props: any) => {
-    if (props && Boolean(props.$show)) {
+registerElementDirective('x-show', (element: any, props: any) => {
+    if (props && Boolean(props.x-show)) {
         return null;
     } else {
         return element;

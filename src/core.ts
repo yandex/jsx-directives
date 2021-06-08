@@ -1,18 +1,10 @@
 import * as React from 'react';
 
-export const PREFIX = '$';
+export const PREFIX = 'x-';
 
 const propsDirectives = new Map();
 const elementDirectives = new Map();
 const hocDirectives = new Map();
-function wrapProps(type: CreateElementType, props: CreateElementProps, children: CreateElementChildren[]): CreateElementProps {
-    if (!props || propsDirectives.size === 0) return props;
-
-    return Object.keys(props)
-        .filter(it => it.substr(0, PREFIX.length) === PREFIX && propsDirectives.has(it))
-        .sort() // для устранения кроссбраузерной разницы порядка свойств объекта
-        .reduce((acc, it) => propsDirectives.get(it)(acc, type, children), props);
-}
 
 export type CreateType = typeof React.createElement;
 export type CreateElementReturn = ReturnType<CreateType>;
@@ -35,31 +27,80 @@ export type ElementDirectiveHandler = ElementDirectiveHandler2Arg | ElementDirec
 type HocDirectiveHandler2Arg = (create: Function, props: CreateElementProps) => CreateElementReturn;
 export type HocDirectiveHandler = HocDirectiveHandler2Arg;
 
+export function extractDirectiveProps<T extends CreateElementProps, K extends keyof T = keyof T>(props: T) {
+    if (!props) {
+        return {
+            pDirs: [],
+            hDirs: [],
+            eDirs: [],
+            restProps: props,
+        };
+    }
+
+    const pDirs: [K, T[K]][] = [];
+    const hDirs: [K, T[K]][] = [];
+    const eDirs: [K, T[K]][] = [];
+    const restProps: Partial<T> = {};
+    const propKeys = ('object' === typeof props ? Object.keys(props as object) : []) as K[];
+    for (let i = 0; i < propKeys.length; i++) {
+        const key: K = propKeys[i];
+        const val = (props as any)[key] as T[K];
+        if ((key as string).substr(0, PREFIX.length) === PREFIX) {
+            if (propsDirectives.has(key)) {
+                pDirs.push([key, val]);
+            } else if (hocDirectives.has(key)) {
+                hDirs.push([key, val]);
+            } else if (elementDirectives.has(key)) {
+                eDirs.push([key, val]);
+            } else {
+                console.warn(`Unregistered directive ${key}`);
+            }
+        } else {
+            restProps[key] = val;
+        }
+    }
+    return {
+        pDirs: pDirs.sort(), // сортируем для устранения кроссбраузерной разницы порядка свойств объекта
+        hDirs: hDirs.sort(),
+        eDirs: eDirs.sort(),
+        restProps,
+    };
+}
+
 export function jsxPragmaBuilder(pragma: CreateType) {
     return function createElementPatch(this: typeof React, type: CreateElementType, props: CreateElementProps, ...children: CreateElementChildren[]): CreateElementReturn {
-        let newProps = wrapProps(type, props, children);
-        let Element = ({ children = [], ...props }: any) => pragma.call(this, type, props, ...(children instanceof Array ? children : [children]));
-        if (!newProps || elementDirectives.size === 0) return Element({children, ...newProps});
+        if (typeof type !== 'function' && typeof type !== 'string') return pragma.call(this, type, props, ...children); // исключаем фрагменты, провайдеры и т.п.
+        const originChildren = children;
+        const { pDirs, hDirs, eDirs, restProps } = extractDirectiveProps(props);
 
-        if (hocDirectives.size > 0) {
-            [newProps, Element] = Object.keys(newProps)
-                .filter(it => it.substr(0, PREFIX.length) === PREFIX && hocDirectives.has(it))
-                .sort() // для устранения кроссбраузерной разницы порядка свойств объекта
-                .reduce(([pr,el], it) => {
-                    const npr = { ...pr };
-                    delete (npr as any)[it];
-                    return [npr, hocDirectives.get(it)(el, pr)];
-                }, [newProps, Element]);
+        let newProps = restProps;
+        if (props && pDirs.length > 0) {
+            newProps = pDirs
+                .reduce((acc, [key, val]) => {
+                    return propsDirectives.get(key)({ [key]: val, ...acc }, type, children);
+                }, newProps);
         }
 
-        if (elementDirectives.size > 0) {
-            return Object.keys(newProps)
-                .filter(it => it.substr(0, PREFIX.length) === PREFIX && elementDirectives.has(it))
-                .sort() // для устранения кроссбраузерной разницы порядка свойств объекта
-                .reduce((acc, it) => elementDirectives.get(it)(acc, newProps, type, children, pragma), Element({children, ...newProps}));
+        let Element = (props: any) => {
+            return pragma(type, props, ...originChildren);
+        }
+        if (!newProps) return Element({});
+
+        if (hDirs.length > 0) {
+            Element = hDirs
+                .reduce((el, [key, val]) => {
+                    return hocDirectives.get(key)(el, { [key]: val, ...newProps });
+                }, Element);
         }
 
-        return Element({children, ...newProps});
+        if (eDirs.length > 0) {
+            return eDirs
+                .reduce((acc, [key, val]) => {
+                    return elementDirectives.get(key)(acc, { [key]: val, ...newProps }, type, children, pragma)
+                }, Element(newProps));
+        }
+
+        return Element(newProps);
     };
 }
 

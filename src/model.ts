@@ -7,16 +7,16 @@ export type ModelType = {
 
 declare module 'react' {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
-        $model?: ModelType;
+        'x-model'?: ModelType;
     }
 
     interface Attributes {
-        $model?: ModelType;
+        'x-model'?: ModelType;
     }
 }
 
-registerPropsDirective('$model', ({$model, ...props}: any) => ({
-    value: $model.value,
-    onChange: $model.onChange,
+registerPropsDirective('x-model', ({['x-model']: xModel, ...props}: any) => ({
+    value: xModel.value,
+    onChange: xModel.onChange,
     ...props,
 }));

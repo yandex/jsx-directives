@@ -7,7 +7,7 @@ import * as rtDEV from 'react/jsx-dev-runtime';
 import { render } from '@testing-library/react';
 import { registerAllReact } from '../dist';
 
-describe('directive $label', () => {
+describe('directive x-label', () => {
 
     beforeAll(() => {
         registerAllReact(React, rt, rtDEV);
@@ -16,7 +16,7 @@ describe('directive $label', () => {
     test('simple label', () => {
         const { container } = render(
             <div>
-                <input className="target" $label="Some label text" />
+                <input className="target" x-label="Some label text" />
             </div>,
         );
 

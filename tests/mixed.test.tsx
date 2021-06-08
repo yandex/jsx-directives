@@ -29,7 +29,7 @@ describe('mixed directives', () => {
 
         const { container } = render(
             <div>
-                <div className="target" $hoc={Hoc} $label="Some label">
+                <div className="target" x-hoc={Hoc} x-label="Some label">
                     <input className="child"/>
                 </div>
             </div>,

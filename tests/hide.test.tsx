@@ -7,7 +7,7 @@ import * as rtDEV from 'react/jsx-dev-runtime';
 import { render } from '@testing-library/react';
 import { registerAllReact } from '../dist';
 
-describe('directive $hide', () => {
+describe('directive x-hide', () => {
 
     beforeAll(() => {
         registerAllReact(React, rt, rtDEV);
@@ -26,7 +26,7 @@ describe('directive $hide', () => {
     test('equals to true', () => {
         const { container } = render(
             <div>
-                <div className="target" $hide={true} />
+                <div className="target" x-hide={true} />
             </div>,
         );
 
@@ -36,7 +36,7 @@ describe('directive $hide', () => {
     test('equals to false', () => {
         const { container } = render(
             <div>
-                <div className="target" $hide={false} />
+                <div className="target" x-hide={false} />
             </div>,
         );
 

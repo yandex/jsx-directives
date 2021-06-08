@@ -4,22 +4,22 @@ export type HocType = Function | Function[];
 
 declare module 'react' {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
-        $hoc?: HocType;
+        'x-hoc'?: HocType;
     }
 
     interface Attributes {
-        $hoc?: HocType;
+        'x-hoc'?: HocType;
     }
 }
 
-registerHocDirective('$hoc', (Factory: Function, props: any) => {
-    if (props && 'function' === typeof props.$hoc) {
-        const Hoc = props.$hoc;
+registerHocDirective('x-hoc', (Factory: Function, props: any) => {
+    if (props && 'function' === typeof props['x-hoc']) {
+        const Hoc = props['x-hoc'];
         return Hoc(Factory);
-    } else if (props.$hoc instanceof Array) {
-        return (props.$hoc || []).reduce((acc, it) => it(acc), Factory);
+    } else if (props['x-hoc'] instanceof Array) {
+        return (props['x-hoc'] || []).reduce((acc: Function, it: Function) => it(acc), Factory);
     } else {
-        console.error(`Unexpected arguments on $hoc`, props.$hoc);
+        console.error(`Unexpected arguments on x-hoc`, props['x-hoc']);
         return Factory;
     }
 });

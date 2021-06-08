@@ -8,7 +8,7 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import { registerAllReact } from '../dist';
 
-describe('directive $model', () => {
+describe('directive x-model', () => {
 
     beforeAll(() => {
         registerAllReact(React, rt, rtDEV);
@@ -21,7 +21,7 @@ describe('directive $model', () => {
         };
         const { container } = render(
             <div>
-                <input className="target" $model={model} />
+                <input className="target" x-model={model} />
             </div>,
         );
 
