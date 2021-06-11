@@ -59,11 +59,11 @@ registerAllReact(React, rt, rtDEV);
 
 По умолчанию в пакете предустановлены следующие директивы:
 
-- [x-show](https://github.com/yandex/jsx-directives/blob/master/docs/x-show) - принимает булево значение и добавляет элемент в DOM если значение истинно
-- [x-hide](https://github.com/yandex/jsx-directives/blob/master/docs/x-hide) - принимает булево значение и удаляет элемент из DOM если значение истинно
-- [x-model](https://github.com/yandex/jsx-directives/blob/master/docs/x-model) - принимает объект и передаёт его свойства value и onChange как свойства компонента
-- [x-hoc](https://github.com/yandex/jsx-directives/blob/master/docs/x-hoc) - принимает враппер (HOC) или массив врапперов и оборачивает в них компонент
-- [x-label](https://github.com/yandex/jsx-directives/blob/master/docs/x-label) - оборачивает компонент в label, принимает текстовое значение и использует его как текст для label
+- [x-show](https://github.com/yandex/jsx-directives/blob/master/docs/x-show.md) - принимает булево значение и добавляет элемент в DOM если значение истинно
+- [x-hide](https://github.com/yandex/jsx-directives/blob/master/docs/x-hide.md) - принимает булево значение и удаляет элемент из DOM если значение истинно
+- [x-model](https://github.com/yandex/jsx-directives/blob/master/docs/x-model.md) - принимает объект и передаёт его свойства value и onChange как свойства компонента
+- [x-hoc](https://github.com/yandex/jsx-directives/blob/master/docs/x-hoc.md) - принимает враппер (HOC) или массив врапперов и оборачивает в них компонент
+- [x-label](https://github.com/yandex/jsx-directives/blob/master/docs/x-label.md) - оборачивает компонент в label, принимает текстовое значение и использует его как текст для label
 
 Пример использования для React:
 ```tsx
