@@ -59,9 +59,11 @@ registerAllReact(React, rt, rtDEV);
 
 По умолчанию в пакете предустановлены следующие директивы:
 
-- x-show - принимает булево значение и добавляет элемент в DOM если значение истинно
-- x-hide - принимает булево значение и удаляет элемент из DOM если значение истинно
-- x-model - принимает объект и передаёт его свойства value и onChange как свойства компонента
+- [x-show](https://github.com/yandex/jsx-directives/master/docs/x-show) - принимает булево значение и добавляет элемент в DOM если значение истинно
+- [x-hide](https://github.com/yandex/jsx-directives/master/docs/x-hide) - принимает булево значение и удаляет элемент из DOM если значение истинно
+- [x-model](https://github.com/yandex/jsx-directives/master/docs/x-model) - принимает объект и передаёт его свойства value и onChange как свойства компонента
+- [x-hoc](https://github.com/yandex/jsx-directives/master/docs/x-hoc) - принимает враппер (HOC) или массив врапперов и оборачивает в них компонент
+- [x-label](https://github.com/yandex/jsx-directives/master/docs/x-label) - оборачивает компонент в label, принимает текстовое значение и использует его как текст для label
 
 Пример использования для React:
 ```tsx
