@@ -27,7 +27,7 @@
     
 ```tsx
 <div>
-  <SomeElement $visible={isVisible} />
+  <SomeElement x-show={isVisible} />
 </div>
 ```
     
