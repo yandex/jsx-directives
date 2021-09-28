@@ -151,7 +151,23 @@ export function isRegistered(name: string) {
 }
 
 export function registerPragma(object: any, property: string) {
-    object[property] = jsxPragmaBuilder(object[property]);
+    const newValue = jsxPragmaBuilder(object[property]);
+    try {
+        object[property] = newValue;
+    } catch (e) {
+        try {
+            const conf = Object.getOwnPropertyDescriptor(object, property);
+            if (conf && 'function' === typeof conf.get) {
+                Object.defineProperty(object, property, { ...conf, get: () => newValue });
+            } else if (conf && undefined !== conf.value) {
+                Object.defineProperty(object, property, { ...conf, value: newValue });
+            } else {
+                console.warn('JSX pragma was not registered:', property, 'in', object);
+            }
+        } catch (e) {
+            console.warn('JSX pragma was not registered:', property, 'in', object);
+        }
+    }
 }
 
 let isRegisterReactCalled = false;
